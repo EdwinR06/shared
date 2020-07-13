@@ -49,6 +49,10 @@ public class TestTeleOp extends OpMode {
   private DcMotor backLeftMotor;
   private DcMotor backRightMotor;
 
+  double drive;
+  double strafe;
+  double turn;
+
   @Override
   public void init() {
     telemetry.addData("Status", "Initialized");
@@ -92,7 +96,12 @@ public class TestTeleOp extends OpMode {
   @Override
   public void loop() {
     telemetry.addData("Status", "Run Time: " + runtime.toString());
-    frontLeftMotor.setPower(gamepad1.left_stick_y);
+
+    drive = gamepad1.right_stick_y;
+    strafe = gamepad1.right_stick_x;
+    turn = gamepad1.left_stick_x;
+
+    frontLeftMotor.setPower(drive);
     backLeftMotor.setPower(gamepad1.left_stick_y);
     frontRightMotor.setPower(gamepad1.left_stick_y);
     backRightMotor.setPower(gamepad1.left_stick_y);
