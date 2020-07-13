@@ -32,20 +32,40 @@ package org.firstinspires.ftc.teamcode.shared;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
  * Demonstrates empty OpMode
  */
-@TeleOp(name = "Concept: NullOp", group = "Concept")
-@Disabled
+@TeleOp(name = "Test: TeleOp")
+//@Disabled
 public class TestTeleOp extends OpMode {
-
   private ElapsedTime runtime = new ElapsedTime();
+
+  private DcMotor frontLeftMotor;
+  private DcMotor frontRightMotor;
+  private DcMotor backLeftMotor;
+  private DcMotor backRightMotor;
 
   @Override
   public void init() {
     telemetry.addData("Status", "Initialized");
+    frontLeftMotor = hardwareMap.get(DcMotor.class, "front_left_motor");
+    frontRightMotor = hardwareMap.get(DcMotor.class, "front_right_motor");
+    backLeftMotor = hardwareMap.get(DcMotor.class, "back_left_motor");
+    backRightMotor = hardwareMap.get(DcMotor.class, "back_right_motor");
+
+    frontLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    frontRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    backLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    backRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+    frontLeftMotor.setDirection(DcMotor.Direction.FORWARD);
+    backLeftMotor.setDirection(DcMotor.Direction.FORWARD);
+    frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
+    backRightMotor.setDirection(DcMotor.Direction.REVERSE);
   }
 
   /*
@@ -72,5 +92,9 @@ public class TestTeleOp extends OpMode {
   @Override
   public void loop() {
     telemetry.addData("Status", "Run Time: " + runtime.toString());
+    frontLeftMotor.setPower(gamepad1.left_stick_y);
+    backLeftMotor.setPower(gamepad1.left_stick_y);
+    frontRightMotor.setPower(gamepad1.left_stick_y);
+    backRightMotor.setPower(gamepad1.left_stick_y);
   }
 }
