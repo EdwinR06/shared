@@ -98,12 +98,14 @@ public class TestTeleOp extends OpMode {
     telemetry.addData("Status", "Run Time: " + runtime.toString());
 
     drive = gamepad1.right_stick_y;
-    strafe = gamepad1.right_stick_x;
-    turn = gamepad1.left_stick_x;
+    strafe = -gamepad1.right_stick_x;
+    turn = -gamepad1.left_stick_x;
 
-    frontLeftMotor.setPower(drive - strafe + turn);
+    frontLeftMotor.setPower(drive + strafe + turn);
     backLeftMotor.setPower(drive - strafe + turn);
-    frontRightMotor.setPower(drive - strafe + turn);
-    backRightMotor.setPower(drive - strafe + turn);
+    frontRightMotor.setPower(drive - strafe - turn);
+    backRightMotor.setPower(drive + strafe - turn);
+
+    System.out.println(strafe);
   }
 }
