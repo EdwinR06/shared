@@ -101,9 +101,9 @@ public class TestTeleOp extends OpMode {
     strafe = gamepad1.right_stick_x;
     turn = gamepad1.left_stick_x;
 
-    frontLeftMotor.setPower(drive);
-    backLeftMotor.setPower(gamepad1.left_stick_y);
-    frontRightMotor.setPower(gamepad1.left_stick_y);
-    backRightMotor.setPower(gamepad1.left_stick_y);
+    frontLeftMotor.setPower(drive - strafe + turn);
+    backLeftMotor.setPower(drive - strafe + turn);
+    frontRightMotor.setPower(drive - strafe + turn);
+    backRightMotor.setPower(drive - strafe + turn);
   }
 }
