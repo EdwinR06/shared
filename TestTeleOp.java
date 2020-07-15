@@ -105,7 +105,5 @@ public class TestTeleOp extends OpMode {
     backLeftMotor.setPower(drive - strafe + turn);
     frontRightMotor.setPower(drive - strafe - turn);
     backRightMotor.setPower(drive + strafe - turn);
-
-    System.out.println(strafe);
   }
 }
