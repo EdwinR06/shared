@@ -7,6 +7,7 @@ public class Chassis {
     private DriveWheel frontRight;
     private DriveWheel backLeft;
     private DriveWheel backRight;
+    private static final double LOOK_AHEAD_DISTANCE = 12;
 
     public Chassis() {
         FTCUtil.telemetry.addData("Status", "Initialized");
@@ -23,7 +24,9 @@ public class Chassis {
 
     public void followPath(Path path){
         Point currentPosition = new Point(0,0);
-
+        while(!path.isComplete(currentPosition)){
+            Path.TargetPoint target = path.targetPoint(currentPosition, LOOK_AHEAD_DISTANCE);
+        }
     }
 
     private void setTargetDistance(double inches){
