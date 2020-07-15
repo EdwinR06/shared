@@ -17,21 +17,20 @@ public class Path {
         if (rawPoints.length < 2) {
             throw new IllegalArgumentException("Tried to create a path with too few points.");
         }
-        distanceOfPath += totalDistanceOfPath(rawPoints);
-        double distanceToStart = 0;
-
+        distanceOfPath = 0;
         wayPoints = new ArrayList<>();
-
 
         WayPoint firstWayPoint = new WayPoint(rawPoints[0], 0, 0, 0, 0);
         pathWayPoints.add(firstWayPoint);
         for (int i = 1; i < rawPoints.length; i++) {
-            double distanceFromPreviousWayPoint = rawPoints[i].distanceToPoint(rawPoints[i - 1]);
-            distanceToStart += distanceFromPreviousWayPoint;
-
-            if (!rawPoints[i].equals(rawPoints[i - 1])) {
-                pathWayPoints.add(new WayPoint(rawPoints[i], rawPoints[i].getX() - rawPoints[i - 1].getX(), rawPoints[i].getY() - rawPoints[i - 1].getY(), rawPoints[i].distanceToPoint(rawPoints[i - 1]), distanceToStart));
+            Point current = rawPoints[i];
+            Point previous = rawPoints[i - 1];
+            if (current.equals(previous)) {
+                continue; //Skip Duplicates
             }
+            double distanceFromPrevious = current.distanceToPoint(previous);
+            distanceOfPath += distanceFromPrevious;
+            pathWayPoints.add(new WayPoint(current, current.getX() - previous.getX(), current.getY() - previous.getY(), current.distanceToPoint(previous), distanceOfPath));
         }
         if (pathWayPoints.size() < 2) {
             throw new IllegalArgumentException("Path must have two unique points.");
@@ -46,27 +45,11 @@ public class Path {
         return points;
     }
 
-    public double totalDistanceOfPath(Point[] rawPoints) {
-        double totalDistanceOfPath = 0;
-        for (int i = 0; i < rawPoints.length - 1; i++) {
-            totalDistanceOfPath += Point.distanceBetweenTwoPoints(rawPoints[i], rawPoints[i + 1]);
-        }
-        return totalDistanceOfPath;
-    }
-
-
     /**
      * @return total distance of the path
      */
     public double totalDistance() {
-        double totalDistanceBetweenTwoWayPoints = 0;
-        for (int i = 0; i < pathWayPoints.size() - 1; i++) {
-
-            totalDistanceBetweenTwoWayPoints += Point.distanceBetweenTwoPoints(pathWayPoints.get(i).point, pathWayPoints.get(i + 1).point);
-
-
-        }
-        return totalDistanceBetweenTwoWayPoints;
+        return distanceOfPath;
     }
 
     /**
