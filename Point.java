@@ -108,7 +108,7 @@ public class Point {
         return midPoint;
     }
 
-    public Point closestWayPoint(ArrayList<Path.WayPoint> closestWayPoint) {
+    /*public Point closestWayPoint(ArrayList<Path.WayPoint> closestWayPoint) {
         Point closestWayPoint1 = closestWayPoint.get(0).point;
         for (int i = 1; i < closestWayPoint.size(); i++) {
             if (this.distanceToPoint(closestWayPoint.get(i).point) < this.distanceToPoint(closestWayPoint1)) {
@@ -121,7 +121,7 @@ public class Point {
     public Point closestPointAlongPath(LineSegment other) {
 
         return new Point(0, 0);
-    }
+    }*/
 
 
 

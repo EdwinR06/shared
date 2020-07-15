@@ -21,6 +21,11 @@ public class Chassis {
         setPowers(motorPower);
     }
 
+    public void followPath(Path path){
+        Point currentPosition = new Point(0,0);
+
+    }
+
     private void setTargetDistance(double inches){
         frontLeft.setTargetDistance(inches);
         frontRight.setTargetDistance(inches);
