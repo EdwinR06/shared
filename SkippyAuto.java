@@ -43,10 +43,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class SkippyAuto extends LinearOpMode {
   private ElapsedTime runtime = new ElapsedTime();
 
-  double drive;
-  double strafe;
-  double turn;
-
   private Skippy skippy;
 
   @Override
