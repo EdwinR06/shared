@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.shared;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.sun.corba.se.impl.interceptors.PICurrent;
 
 public class Chassis {
     private DriveWheel frontLeft;
@@ -17,16 +18,74 @@ public class Chassis {
         backRight = new DriveWheel( "back_right_motor", DcMotor.Direction.REVERSE);
     }
 
+    /*static class DriveCommand{
+        public Vector driveVector;
+        public double turnOutput;
+
+        public DriveCommand(Vector driveVector, double turnOutput) {
+            this.driveVector = driveVector;
+            this.turnOutput = turnOutput;
+        }
+    }*/
+    private void driveLocalVector(Vector v){
+        frontLeft.setPower(v.x - v.y);
+        backLeft.setPower(v.x + v.y);
+
+        frontRight.setPower(v.x + v.y);
+        backRight.setPower(v.x - v.y);
+    }
+
+    public void driveTowardsPoint(Point target, double power){
+        //Position robotPosition = odometrySystem.getState().position;
+
+        Vector v = getDriveTowardsPointCommands(target, power, null);
+
+        driveLocalVector(v);
+    }
+
+    Vector getDriveTowardsPointCommands(Point target, double power, Point current){
+        double dx = target.x - current.x;
+        double dy = target.y - current.y;
+        double globalAngleAlongPoint = Math.atan2(dy, dx);
+
+        /*double angle = globalAngleAlongPoint - current.heading;
+        //Could refactor to angle method in a utilities class
+        while(angle > Math.PI){
+            angle -= (2 * Math.PI);
+        }
+        while(angle < -Math.PI){
+            angle += (2 * Math.PI);
+        }
+        double localAngleToPoint = angle;
+
+        Vector v = Vector.makeUnitVector(localAngleToPoint);
+        v.scale(power);*/
+
+        return null;
+    }
+
     public void drive(double inches, double motorPower) {
         setTargetDistance(inches);
         setPowers(motorPower);
     }
 
     public void followPath(Path path){
+        //todo change to alex's subclass that contains heading as well
         Point currentPosition = new Point(0,0);
+        double power;
         while(!path.isComplete(currentPosition)){
             Path.TargetPoint target = path.targetPoint(currentPosition, LOOK_AHEAD_DISTANCE);
+            power = target.power;
+            driveTowardsPoint(target.point, power);
         }
+        stopMotors();
+    }
+
+    private void stopMotors() {
+        frontRight.setPower(0);
+        frontLeft.setPower(0);
+        backRight.setPower(0);
+        backLeft.setPower(0);
     }
 
     private void setTargetDistance(double inches){

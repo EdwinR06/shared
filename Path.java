@@ -12,7 +12,7 @@ public class Path {
     List<WayPoint> wayPoints;
     double distanceOfPath = 0;
 
-    public Path(Point[] rawPoints) {
+    public Path(PowerPoint[] rawPoints) {
 
         if (rawPoints.length < 2) {
             throw new IllegalArgumentException("Tried to create a path with too few points.");
@@ -20,17 +20,17 @@ public class Path {
         distanceOfPath = 0;
         wayPoints = new ArrayList<>();
 
-        WayPoint firstWayPoint = new WayPoint(rawPoints[0], 0, 0, 0, 0);
+        WayPoint firstWayPoint = new WayPoint(rawPoints[0].makePoint(), 0, 0, 0, 0, rawPoints[0].power);
         pathWayPoints.add(firstWayPoint);
         for (int i = 1; i < rawPoints.length; i++) {
-            Point current = rawPoints[i];
-            Point previous = rawPoints[i - 1];
+            Point current = rawPoints[i].makePoint();
+            Point previous = rawPoints[i - 1].makePoint();
             if (current.equals(previous)) {
                 continue; //Skip Duplicates
             }
             double distanceFromPrevious = current.distanceToPoint(previous);
             distanceOfPath += distanceFromPrevious;
-            pathWayPoints.add(new WayPoint(current, current.getX() - previous.getX(), current.getY() - previous.getY(), current.distanceToPoint(previous), distanceOfPath));
+            pathWayPoints.add(new WayPoint(current, current.getX() - previous.getX(), current.getY() - previous.getY(), current.distanceToPoint(previous), distanceOfPath, rawPoints[i].power));
         }
         if (pathWayPoints.size() < 2) {
             throw new IllegalArgumentException("Path must have two unique points.");
@@ -63,27 +63,39 @@ public class Path {
             iNext++;
 
         }
+
+        double segmentLength = pathWayPoints.get(iNext).distanceFromPrevious;
         double remainingDistance;
         remainingDistance = targetDistance - pathWayPoints.get(iNext).componentAlongPath(current);
+
         while (remainingDistance > 0 && iNext < pathWayPoints.size() - 1) {
             iNext++;
-            remainingDistance -= pathWayPoints.get(iNext).distanceFromPrevious;
+            remainingDistance -= segmentLength;
 
         }
         //Check to see if we run out of WayPoints before target distance
         if (remainingDistance > 0) {
             return new TargetPoint(pathWayPoints.get(iNext));
         }
+        int iPrevious = iNext - 1;
 
-        remainingDistance += pathWayPoints.get(iNext).distanceFromPrevious;
-        Point firstWayPointForInterpolation = pathWayPoints.get(iNext - 1).point;
+        //Power calculation
+        double currentDistanceFromPrevious = segmentLength - pathWayPoints.get(iNext).componentAlongPath(current);
+        double currentDistanceRatio = currentDistanceFromPrevious / segmentLength;
+        double powerDifference = pathWayPoints.get(iNext).power - pathWayPoints.get(iPrevious).power;
+        double powerStep = powerDifference * currentDistanceRatio;
+        double powerOutput = pathWayPoints.get(iPrevious).power + powerStep;
+
+        //target point interpolation
+        remainingDistance += segmentLength;
+        Point firstWayPointForInterpolation = pathWayPoints.get(iPrevious).point;
         Point secondWayPointForInterpolation = pathWayPoints.get(iNext).point;
         LineSegment ls = new LineSegment(firstWayPointForInterpolation, secondWayPointForInterpolation);
         Point target = ls.interpolate(remainingDistance);
 
-        double distFromStart = remainingDistance + pathWayPoints.get(iNext - 1).distanceFromStart;
+        double distFromStart = remainingDistance + pathWayPoints.get(iPrevious).distanceFromStart;
 
-        return new TargetPoint(target, distFromStart, distanceFromEnd(distFromStart));
+        return new TargetPoint(target, distFromStart, distanceFromEnd(distFromStart), powerOutput);
     }
 
     public boolean isComplete(Point current) {
@@ -121,11 +133,13 @@ public class Path {
         public Point point;
         public double distanceFromStart;
         public double distanceToEnd;
+        public double power;
 
-        public TargetPoint(Point point, double distanceFromStart, double distanceFromEnd) {
+        public TargetPoint(Point point, double distanceFromStart, double distanceFromEnd, double power) {
             this.point = point;
             this.distanceFromStart = distanceFromStart;
             this.distanceToEnd = distanceFromEnd;
+            this.power = power;
         }
 
         public TargetPoint(WayPoint wayPoint) {
@@ -141,15 +155,16 @@ public class Path {
         public double deltaYFromPrevious;
         public double distanceFromPrevious;
         public double distanceFromStart;
+        public double power;
 
 
-        public WayPoint(Point point, double deltaXFromPrevious, double deltaYFromPrevious, double distanceFromPrevious, double distanceFromStart) {
+        public WayPoint(Point point, double deltaXFromPrevious, double deltaYFromPrevious, double distanceFromPrevious, double distanceFromStart, double power) {
             this.point = point;
             this.deltaXFromPrevious = deltaXFromPrevious;
             this.deltaYFromPrevious = deltaYFromPrevious;
             this.distanceFromPrevious = distanceFromPrevious;
             this.distanceFromStart = distanceFromStart;
-
+            this.power = power;
         }
 
         public double getDistanceToEnd() {
