@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -49,9 +50,12 @@ public class TestTeleOp extends OpMode {
   private DcMotor backLeftMotor;
   private DcMotor backRightMotor;
 
+  private Servo feeder;
+
   double drive;
   double strafe;
   double turn;
+  boolean servoMovement;
 
   @Override
   public void init() {
@@ -60,6 +64,7 @@ public class TestTeleOp extends OpMode {
     frontRightMotor = hardwareMap.get(DcMotor.class, "front_right_motor");
     backLeftMotor = hardwareMap.get(DcMotor.class, "back_left_motor");
     backRightMotor = hardwareMap.get(DcMotor.class, "back_right_motor");
+    feeder = hardwareMap.get(Servo.class, "feeder");
 
     frontLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     frontRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -100,10 +105,14 @@ public class TestTeleOp extends OpMode {
     drive = gamepad1.right_stick_y;
     strafe = -gamepad1.right_stick_x;
     turn = -gamepad1.left_stick_x;
+    servoMovement = gamepad2.a;
 
     frontLeftMotor.setPower(drive + strafe + turn);
     backLeftMotor.setPower(drive - strafe + turn);
     frontRightMotor.setPower(drive - strafe - turn);
     backRightMotor.setPower(drive + strafe - turn);
+    if (servoMovement == true) {
+      feeder.setPosition(1);
+    }
   }
 }
