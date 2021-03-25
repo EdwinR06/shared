@@ -111,8 +111,5 @@ public class TestTeleOp extends OpMode {
     backLeftMotor.setPower(drive - strafe + turn);
     frontRightMotor.setPower(drive - strafe - turn);
     backRightMotor.setPower(drive + strafe - turn);
-    if (servoMovement == true) {
-      feeder.setPosition(1);
-    }
   }
 }
